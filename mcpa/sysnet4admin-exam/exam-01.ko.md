@@ -1802,7 +1802,7 @@ B의 stdio는 원격 접속을 지원하지 않습니다. C의 HTTP+SSE는 폐�
 
 - [davila7/model_context_protocol_associate_exam_prep](https://github.com/davila7/model_context_protocol_associate_exam_prep): 연습 문제 119문항, MIT
 - [rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch): [MCPA 자료](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/certifications/mcpa/README.md), 모의고사 3세트, MIT
-- [rohitg00 MCP 2026-07-28 brief 한국어 병기본](../rohitg00-exam/brief.ko.md): 스펙 원문, 스키마, changelog를 정리한 요약, MIT
+- [rohitg00 MCP 2026-07-28 brief 한국어 병기본](../others-exam/rohitg00/brief.ko.md): 스펙 원문, 스키마, changelog를 정리한 요약, MIT
 - [WorkOS 블로그: MCPA 보안과 거버넌스 도메인](https://workos.com/blog/mcpa-certification-security-and-governance)
 - [spec-2026-07-28.md](../spec-2026-07-28.md): 이 저장소의 2026-07-28 변경 요약
 

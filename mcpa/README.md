@@ -35,10 +35,9 @@ MCPA 공식 페이지는 MCP 2026-07-28 스펙으로 준비하라고 안내합�
 
 ## 자료 구성
 
-출처별로 폴더를 나눴습니다. 연습 문제 폴더는 만든 사람의 GitHub 아이디를 앞에 붙였습니다. 이 저장소에서 만든 자료는
-`cheatsheet/`와 `sysnet4admin-exam/`에 있습니다. 다른 사람이 만든 자료는 `davila7-exam/`과 `rohitg00-exam/`에
-옮겼고 폴더마다 원작자의 LICENSE가 있습니다. 원문은 `.en.md`입니다. 영어 원문 아래에
-한국어 번역을 붙인 파일은 `.ko.md`입니다.
+출처별로 폴더를 나눴습니다. 이 저장소에서 만든 자료는 `cheatsheet/`와 `sysnet4admin-exam/`에 있습니다. 다른 사람이
+만든 연습 문제는 `others-exam/` 아래 원작자의 GitHub 아이디 폴더에 옮겼고 폴더마다 원작자의 LICENSE가 있습니다.
+원문은 `.en.md`입니다. 영어 원문 아래에 한국어 번역을 붙인 파일은 `.ko.md`입니다.
 
 | 경로 | 내용 |
 |---|---|
@@ -46,14 +45,14 @@ MCPA 공식 페이지는 MCP 2026-07-28 스펙으로 준비하라고 안내합�
 | [spec-2026-07-28.md](spec-2026-07-28.md) | 2026-07-28 스펙에서 바뀐 것 요약 |
 | [cheatsheet/](cheatsheet/) | 용어 치트시트(한국어, 영어 PDF) |
 | [sysnet4admin-exam/](sysnet4admin-exam/) | sysnet4admin(조훈)이 AI를 사용해 만들고 검증한 예제 시험 8세트(`exam-01.ko.md`~`exam-08.ko.md`)와 참고 자료 목록(`references.md`). 세트마다 60문항이고 영어 문제 아래에 한국어 번역과 해설이 있습니다 |
-| [davila7-exam/](davila7-exam/) | davila7 연습 문제 119문항(`questions.en.md`, `questions.ko.md`) |
-| [rohitg00-exam/](rohitg00-exam/) | rohitg00 모의고사 3세트 180문항(`mock-01`~`mock-03`)과 모의고사의 근거가 되는 스펙 요약 문서(`brief`) |
+| [others-exam/davila7/](others-exam/davila7/) | davila7 연습 문제 119문항(`questions.en.md`, `questions.ko.md`) |
+| [others-exam/rohitg00/](others-exam/rohitg00/) | rohitg00 모의고사 3세트 180문항(`mock-01`~`mock-03`)과 모의고사의 근거가 되는 스펙 요약 문서(`brief`) |
 
 ## 출처와 라이선스
 
 - 이 저장소에서 만든 자료는 저장소 루트의 [LICENSE](../LICENSE)(MIT)를 따릅니다.
-- davila7: [davila7/model_context_protocol_associate_exam_prep](https://github.com/davila7/model_context_protocol_associate_exam_prep)의 커밋 `8e8e7da`(2026-08-01)에서 옮겼습니다. 사이트 페이지마다 흩어진 퀴즈를 한 파일로 모았고 문제와 해설은 원문 그대로입니다. MIT 라이선스이고 원문은 [davila7-exam/LICENSE](davila7-exam/LICENSE)에 있습니다.
-- rohitg00: [rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch)에서 옮겼습니다. MIT 라이선스이고 원문은 [rohitg00-exam/LICENSE](rohitg00-exam/LICENSE)에 있습니다.
+- davila7: [davila7/model_context_protocol_associate_exam_prep](https://github.com/davila7/model_context_protocol_associate_exam_prep)의 커밋 `8e8e7da`(2026-08-01)에서 옮겼습니다. 사이트 페이지마다 흩어진 퀴즈를 한 파일로 모았고 문제와 해설은 원문 그대로입니다. MIT 라이선스이고 원문은 [others-exam/davila7/LICENSE](others-exam/davila7/LICENSE)에 있습니다.
+- rohitg00: [rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch)에서 옮겼습니다. MIT 라이선스이고 원문은 [others-exam/rohitg00/LICENSE](others-exam/rohitg00/LICENSE)에 있습니다.
   - 모의고사: `certifications/mcpa/assessments/mcpa-f/`의 커밋 `1bafaa8`(2026-09-29). JSON을 마크다운으로 바꿨을 뿐 문제와 해설은 원문 그대로입니다.
   - 스펙 요약 문서(`brief`): `certifications/mcpa/research/mcp-2026-07-28-brief.md`의 커밋 `9f06b4b`(2026-09-25).
 - 한국어 번역(`.ko.md`)과 덧붙인 설명은 AI로 작성했습니다.
@@ -85,10 +84,10 @@ davila7과 rohitg00 문항에서 주제를 선택해 다시 작성했습니다.
 ## 추천 순서
 
 1. [spec-2026-07-28.md](spec-2026-07-28.md)의 "한눈에 보기" 표를 읽습니다.
-2. [davila7 연습 문제](davila7-exam/questions.ko.md)를 풉니다. 공식 비중이 가장 큰 Interactions(26%)와 Security(24%) 섹션부터 풉니다.
+2. [davila7 연습 문제](others-exam/davila7/questions.ko.md)를 풉니다. 공식 비중이 가장 큰 Interactions(26%)와 Security(24%) 섹션부터 풉니다.
 3. [exam-01](sysnet4admin-exam/exam-01.ko.md), [exam-03](sysnet4admin-exam/exam-03.ko.md), [exam-04](sysnet4admin-exam/exam-04.ko.md), [exam-05](sysnet4admin-exam/exam-05.ko.md)를 90분 시간을 정해 두고 풉니다.
 4. [exam-06](sysnet4admin-exam/exam-06.ko.md), [exam-07](sysnet4admin-exam/exam-07.ko.md), [exam-08](sysnet4admin-exam/exam-08.ko.md)을 같은 방식으로 풉니다.
-5. 여유가 있으면 [exam-02](sysnet4admin-exam/exam-02.ko.md)와 rohitg00 모의고사([01](rohitg00-exam/mock-01.ko.md), [02](rohitg00-exam/mock-02.ko.md), [03](rohitg00-exam/mock-03.ko.md))를 풉니다. 둘 다 다른 세트보다 세부 동작을 많이 묻습니다.
+5. 여유가 있으면 [exam-02](sysnet4admin-exam/exam-02.ko.md)와 rohitg00 모의고사([01](others-exam/rohitg00/mock-01.ko.md), [02](others-exam/rohitg00/mock-02.ko.md), [03](others-exam/rohitg00/mock-03.ko.md))를 풉니다. 둘 다 다른 세트보다 세부 동작을 많이 묻습니다.
 
 ## 주의
 

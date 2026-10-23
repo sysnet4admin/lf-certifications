@@ -17,7 +17,7 @@ CNCF 자격증(KCNA, KCSA, CKA, CKAD, CKS) 자료는 강의 수업 자료로 제
 
 - 시험 범위의 주요 개념을 개인적으로 정리한 자료이며 출제 내용을 보장하지 않습니다.
 - 리눅스 재단과 AAIF(Agentic AI Foundation)의 공식 자료가 아닙니다.
-- 이 저장소에서 만든 자료의 라이선스는 [LICENSE](LICENSE)를 따릅니다. 다른 사람이 만든 자료(`mcpa/davila7-exam/`, `mcpa/rohitg00-exam/`)는 각 폴더의 LICENSE(MIT)를 따릅니다.
+- 이 저장소에서 만든 자료의 라이선스는 [LICENSE](LICENSE)를 따릅니다. 다른 사람이 만든 자료(`mcpa/others-exam/`)는 원작자 폴더마다 있는 LICENSE(MIT)를 따릅니다.
 
 ***
 <p align="center">
@@ -40,6 +40,6 @@ Study materials I put together while preparing for Linux Foundation certificatio
 - Certification discount codes: https://promo.kuberneteslab.dev/en/
 - These are personal notes on the main concepts in each exam scope. They are not guaranteed to match
   the exam, and they are not official Linux Foundation or AAIF resources.
-- Files in `mcpa/davila7-exam/` and `mcpa/rohitg00-exam/` are copied from those authors' MIT-licensed repositories
-  (see the LICENSE in each folder).
+- Files in `mcpa/others-exam/` are copied from other authors' MIT-licensed repositories
+  (see the LICENSE in each author's folder).
   Everything else is under this repository's [LICENSE](LICENSE).
