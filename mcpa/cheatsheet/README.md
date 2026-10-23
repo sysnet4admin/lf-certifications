@@ -3,6 +3,7 @@
 [English](#english)
 
 MCPA(Model Context Protocol Associate) 시험 범위의 주요 용어를 A4 한 장에 정리했습니다.
+출력할 때는 A3나 A2로 확대하면 글씨가 커서 읽기 편합니다.
 MCP 2026-07-28 스펙을 기준으로 했고 이 개정에서 새로 생기거나 동작이 바뀌거나 없어진 항목과
 Deprecated 항목에 표시를 달았습니다.
 
@@ -28,7 +29,8 @@ Deprecated 항목에 표시를 달았습니다.
 
 ## English
 
-The main terms in the MCPA (Model Context Protocol Associate) exam scope on one A4 page. It is based on
+The main terms in the MCPA (Model Context Protocol Associate) exam scope on one A4 page. For printing,
+scale it up to A3 or A2 so the text is easier to read. It is based on
 the MCP 2026-07-28 spec, and tags items that were added, changed, removed or deprecated in this revision.
 
 - PDF: [mcpa-cheatsheet-en.pdf](mcpa-cheatsheet-en.pdf) (Korean: [mcpa-cheatsheet-ko.pdf](mcpa-cheatsheet-ko.pdf))
