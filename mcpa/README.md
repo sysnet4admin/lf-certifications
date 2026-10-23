@@ -33,6 +33,16 @@ MCPA 공식 페이지는 MCP 2026-07-28 스펙으로 준비하라고 안내합�
 `ping`, `resources/subscribe` 등이 없어졌습니다. 2025년에 나온 블로그나 튜토리얼은 없어진 기능을 그대로
 설명합니다. [spec-2026-07-28.md](spec-2026-07-28.md)의 "한눈에 보기" 표를 먼저 봅니다.
 
+## 함께 보면 좋은 글과 영상
+
+2026-07-28 스펙에서 무엇이 왜 바뀌었는지 sysnet4admin(조훈)이 설명한 글과 발표입니다. MCPA 준비용으로 만든
+자료는 아닙니다.
+
+| 자료 | 내용 |
+|---|---|
+| [MCP 새로운 스펙 총정리: 무엇을 결정하고 바꿔야 할까?](https://yozm.wishket.com/magazine/detail/3893/) (요즘IT, 2026-08-11) | 스펙의 변화 6가지를 하나씩 설명하고 MCP 서버를 붙여 사용하는 사람, 서버를 만드는 개발자, 운영하는 팀이 할 일을 정리했습니다 |
+| [MCP, 7월 28일 이전과 이후](https://youtu.be/cdlfElVl_Ko) (ETRI 오픈소스 테크데이 2026 발표 영상, 2026-10-07) | MCP가 나온 배경부터 세션을 없앤 이유까지 설명하고 구 스펙 서버와 신 스펙 서버를 비교하는 데모를 진행했습니다. 발표 자료(PDF)와 데모 코드는 [talks 저장소](https://github.com/sysnet4admin/talks/tree/main/ETRI-OST/2026-TechDay)에 있습니다 |
+
 ## 자료 구성
 
 출처별로 폴더를 나눴습니다. 이 저장소에서 만든 자료는 `cheatsheet/`와 `sysnet4admin-exam/`에 있습니다. 다른 사람이
@@ -41,7 +51,7 @@ MCPA 공식 페이지는 MCP 2026-07-28 스펙으로 준비하라고 안내합�
 
 | 경로 | 내용 |
 |---|---|
-| [mcpa-guide-ko.pdf](mcpa-guide-ko.pdf) | 시험 안내 슬라이드(26장). 시험 형식, 범위, 공부 방법을 짧게 소개합니다 |
+| [mcpa-guide-ko.pdf](mcpa-guide-ko.pdf) | 시험 안내 슬라이드(27장). 시험 형식, 범위, 공부 방법을 짧게 소개합니다 |
 | [spec-2026-07-28.md](spec-2026-07-28.md) | 2026-07-28 스펙에서 바뀐 것 요약 |
 | [cheatsheet/](cheatsheet/) | 용어 치트시트(한국어, 영어 PDF) |
 | [sysnet4admin-exam/](sysnet4admin-exam/) | sysnet4admin(조훈)이 AI를 사용해 만들고 검증한 예제 시험 8세트(`exam-01.ko.md`~`exam-08.ko.md`)와 참고 자료 목록(`references.md`). 세트마다 60문항이고 영어 문제 아래에 한국어 번역과 해설이 있습니다 |
