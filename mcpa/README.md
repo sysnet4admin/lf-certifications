@@ -51,7 +51,7 @@ MCPA 공식 페이지는 MCP 2026-07-28 스펙으로 준비하라고 안내합�
 
 | 경로 | 내용 |
 |---|---|
-| [mcpa-guide-ko.pdf](mcpa-guide-ko.pdf) | 시험 안내 슬라이드(27장). 시험 형식, 범위, 공부 방법을 짧게 소개합니다 |
+| [mcpa-guide-ko.pdf](mcpa-guide-ko.pdf) | 시험 안내 슬라이드(27장). 시험 형식, 범위, 공부 방법을 짧게 소개합니다. 이 슬라이드로 설명한 [영상](https://youtu.be/ZRAaIWi56yo)(YouTube)도 있습니다 |
 | [spec-2026-07-28.md](spec-2026-07-28.md) | 2026-07-28 스펙에서 바뀐 것 요약 |
 | [cheatsheet/](cheatsheet/) | 용어 치트시트(한국어, 영어 PDF) |
 | [sysnet4admin-exam/](sysnet4admin-exam/) | sysnet4admin(조훈)이 AI를 사용해 만들고 검증한 예제 시험 8세트(`exam-01.ko.md`~`exam-08.ko.md`)와 참고 자료 목록(`references.md`). 세트마다 60문항이고 영어 문제 아래에 한국어 번역과 해설이 있습니다 |

@@ -9,7 +9,7 @@
 
 | 재단 | 자격증 | 자료 |
 |---|---|---|
-| AAIF | MCPA (Model Context Protocol Associate) | [시험 안내 (슬라이드 PDF)](mcpa/mcpa-guide-ko.pdf), [용어 치트시트 (한국어, 영어 PDF)](mcpa/cheatsheet/), [예제 시험과 연습 문제](mcpa/) |
+| AAIF | MCPA (Model Context Protocol Associate) | [시험 안내 (슬라이드 PDF)](mcpa/mcpa-guide-ko.pdf), [시험 안내 영상 (YouTube)](https://youtu.be/ZRAaIWi56yo), [용어 치트시트 (한국어, 영어 PDF)](mcpa/cheatsheet/), [예제 시험과 연습 문제](mcpa/) |
 
 CNCF 자격증(KCNA, KCSA, CKA, CKAD, CKS) 자료는 강의 수업 자료로 제공합니다.
 
@@ -35,7 +35,7 @@ Study materials I put together while preparing for Linux Foundation certificatio
 
 | Foundation | Certification | Material |
 |---|---|---|
-| AAIF | MCPA (Model Context Protocol Associate) | [Exam guide slides (Korean PDF)](mcpa/mcpa-guide-ko.pdf), [Cheat sheet (English and Korean PDF)](mcpa/cheatsheet/), [practice exams with Korean explanations](mcpa/) |
+| AAIF | MCPA (Model Context Protocol Associate) | [Exam guide slides (Korean PDF)](mcpa/mcpa-guide-ko.pdf), [Exam guide video (Korean, YouTube)](https://youtu.be/ZRAaIWi56yo), [Cheat sheet (English and Korean PDF)](mcpa/cheatsheet/), [practice exams with Korean explanations](mcpa/) |
 
 - Certification discount codes: https://promo.kuberneteslab.dev/en/
 - These are personal notes on the main concepts in each exam scope. They are not guaranteed to match
