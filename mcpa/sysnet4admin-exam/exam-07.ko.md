@@ -1,7 +1,7 @@
 # MCPA 예제 시험 07
 
 > 실제 시험 문항이 아니며 출제 내용을 보장하지 않는다. 리눅스 재단(Linux Foundation)과 AAIF의 공식 자료가 아니다.
-> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 Claude Opus 5.5가 2번 따로 풀어 확인했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
+> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 여러 AI 모델이 따로 풀어 교차 확인했고 해설은 공식 문서와 대조했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
 
 MCPA 공식 범위와 관련 문서를 참고해 재조합해서 만든 60문항이다.
 
@@ -565,29 +565,29 @@ B는 tool이 맞는 경우입니다. tool은 model-controlled이고 모델이 �
 
 </details>
 
-### 22. A server must report a protocol error for a request whose `id` was `"r-12"`. Which error response is correctly formed?
+### 22. A `render_chart` tool creates a PNG chart and returns it in the tool result. How is the image carried in the result's `content`?
 
-- A. `{"jsonrpc": "2.0", "id": "r-12", "error": {"code": "-32602", "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
-- B. `{"jsonrpc": "2.0", "id": "r-12", "error": {"code": -32602, "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
-- C. `{"jsonrpc": "2.0", "id": "r-12", "result": {}, "error": {"code": -32602, "message": "Unknown tool: export_csv"}}`
-- D. `{"jsonrpc": "2.0", "id": "r-13", "error": {"code": -32602, "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
+- A. As a text block that holds the raw PNG bytes without any encoding
+- B. As a block with `type` set to `"image"`, base64-encoded `data`, and a `mimeType` such as `image/png`
+- C. As a `structuredContent` field that holds only the file path on the server's disk
+- D. As a separate notification that the server sends after the result, carrying the image bytes
 
 **한국어**
 
-server가 `id`가 `"r-12"`인 요청에 프로토콜 오류를 알려야 합니다. 올바른 형식의 오류 응답은 어느 것입니까?
+`render_chart` tool은 PNG 차트를 만들어 tool 결과로 돌려줍니다. 결과의 `content`에서 이미지는 어떤 형태로 전달됩니까?
 
-- A. `{"jsonrpc": "2.0", "id": "r-12", "error": {"code": "-32602", "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
-- B. `{"jsonrpc": "2.0", "id": "r-12", "error": {"code": -32602, "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
-- C. `{"jsonrpc": "2.0", "id": "r-12", "result": {}, "error": {"code": -32602, "message": "Unknown tool: export_csv"}}`
-- D. `{"jsonrpc": "2.0", "id": "r-13", "error": {"code": -32602, "message": "Unknown tool: export_csv", "data": {"tool": "export_csv"}}}`
+- A. 인코딩하지 않은 PNG 바이트를 그대로 담은 text 블록으로 전달한다
+- B. `type`이 `"image"`이고 base64로 인코딩한 `data`와 `image/png` 같은 `mimeType`을 가진 블록으로 전달한다
+- C. server 디스크의 파일 경로만 담은 `structuredContent` 필드로 전달한다
+- D. server가 결과 뒤에 보내는 별도 알림에 이미지 바이트를 담아 전달한다
 
 <details><summary>정답과 설명</summary>
 
 **B** (Interactions)
 
-오류 응답에는 원래 요청과 같은 `id`가 있어야 합니다(MUST). `error` 객체에는 `code`와 `message`가 있어야 하고 `code`는 정수여야 합니다(MUST). `data`는 추가 정보를 넣는 선택 필드입니다(MAY). B는 이 조건을 모두 갖췄습니다.
+tool 결과의 `content`에는 종류가 다른 블록을 여러 개 넣을 수 있습니다. 스펙이 정의한 종류는 text, image, audio, resource link 그리고 embedded resource입니다. 이미지는 `type`이 `"image"`인 블록으로 보내고 바이너리 데이터는 base64로 인코딩해 `data`에 넣습니다. `mimeType`에는 `image/png` 같은 형식을 적습니다. 이미지 블록에도 `audience`와 `priority` 같은 annotation을 붙일 수 있습니다.
 
-A는 `code`를 문자열로 보냈습니다. 숫자처럼 보여도 따옴표로 감싼 JSON 문자열은 정수가 아닙니다. C는 `result`와 `error`를 함께 넣었습니다. JSON-RPC 응답에는 둘 중 하나만 있어야 합니다. D는 `id`가 다르므로 client가 이 응답을 `"r-12"` 요청과 연결하지 못합니다.
+A: text 블록의 `text`는 문자열이라 바이너리를 그대로 넣을 수 없습니다. 이미지는 image 블록으로 보냅니다. C: `structuredContent`는 구조화된 결과를 JSON 값으로 돌려주는 자리이고 tool에 `outputSchema`가 있으면 그 스키마를 따라야 합니다. server 디스크의 경로는 client가 읽을 수 있는 값도 아닙니다. D: tool 결과는 `tools/call` 응답에 들어갑니다. 이미지를 별도 알림으로 보내는 방식은 없습니다.
 
 </details>
 
@@ -658,7 +658,7 @@ A는 내용만 보고 층을 판단했습니다. 프로토콜 오류는 `error` 
 - A. Return every log file in each `resources/list` response so that the user can scroll to it
 - B. Offer a resource template such as `logs://{service}/{date}`, and read the built URI with `resources/read`
 - C. Add one tool that returns the logs for all services and all dates in a single result
-- D. Ask the client to subscribe to every log file URI so that the files arrive when they change
+- D. Let the model guess file paths and read the server's disk directly through roots
 
 **한국어**
 
@@ -667,7 +667,7 @@ server는 서비스 300개의 일별 로그 파일을 5년 동안 보관합니�
 - A. 사용자가 스크롤해서 찾도록 `resources/list` 응답마다 모든 로그 파일을 돌려준다
 - B. `logs://{service}/{date}` 같은 resource template을 제공하고 만든 URI를 `resources/read`로 읽게 한다
 - C. 모든 서비스와 모든 날짜의 로그를 결과 하나로 돌려주는 tool을 추가한다
-- D. 파일이 바뀔 때 받도록 client가 모든 로그 파일 URI를 구독하게 한다
+- D. 모델이 파일 경로를 추측해 roots로 server 디스크를 직접 읽게 한다
 
 <details><summary>정답과 설명</summary>
 
@@ -675,7 +675,7 @@ server는 서비스 300개의 일별 로그 파일을 5년 동안 보관합니�
 
 resource template은 매개변수가 있는 URI 패턴입니다. server는 `resources/templates/list`로 template 1개만 알리면 됩니다. client는 사용자가 정한 서비스와 날짜를 넣어 `logs://payments/2026-10-01` 같은 URI를 만들고 `resources/read`로 읽습니다. server가 completion을 지원하면 서비스 이름을 입력할 때 후보를 제안할 수도 있습니다.
 
-A는 50만 개 넘는 항목을 매번 나열하는 방식이라 페이지를 나누더라도 비효율적입니다. C는 결과가 너무 커서 전송과 context window를 모두 낭비합니다. D가 함정입니다. 구독은 바뀐 resource를 알려 주는 기능이고 많은 데이터 가운데 필요한 것을 찾는 방법이 아닙니다.
+A는 50만 개 넘는 항목을 매번 나열하는 방식이라 페이지를 나누더라도 비효율적입니다. C는 결과가 너무 커서 전송과 context window를 모두 낭비합니다. D의 roots는 client가 server에 작업 범위가 되는 디렉터리를 알려 주는 client 기능입니다. 모델이 server 디스크를 직접 읽는 방법이 아닙니다.
 
 </details>
 
@@ -727,7 +727,7 @@ server의 `review_pr` prompt는 `owner`와 `repo` 인자를 받습니다. 사용
 
 인자가 여러 개인 prompt나 URI template에서는 앞서 정한 값이 다음 인자의 후보에 영향을 줍니다. client는 이미 정한 인자를 `completion/complete`의 `context.arguments`에 넣어 보냅니다. 이 요청의 `ref`는 `review_pr` prompt를 가리키고 `argument`는 `{"name": "repo", "value": "re"}`입니다. server는 `owner`가 `acme`인 저장소 가운데 `re`로 시작하는 것을 돌려줄 수 있습니다.
 
-C가 함정입니다. server는 같은 연결에서 받은 이전 요청으로 맥락을 추정하지 않습니다. 2026-07-28 개정은 server가 각 요청을 독립적으로 처리한다고 정합니다. 그 전 개정에서도 completion의 맥락은 `context.arguments`로 전달합니다. B는 `value`에 다른 인자를 섞어서 server가 `repo` 값을 알아보지 못하게 만듭니다. A는 이미 정한 값의 후보를 다시 받을 뿐 `repo` 후보를 좁히지 못합니다.
+C가 함정입니다. server는 같은 연결에서 받은 이전 요청으로 맥락을 추정하지 않습니다. 2026-07-28 개정은 server가 각 요청을 독립적으로 처리한다고 정합니다. 2025-06-18 개정부터 2025-11-25 개정까지도 completion의 맥락은 `context.arguments`로 전달합니다. B는 `value`에 다른 인자를 섞어서 server가 `repo` 값을 알아보지 못하게 만듭니다. A는 이미 정한 값의 후보를 다시 받을 뿐 `repo` 후보를 좁히지 못합니다.
 
 </details>
 
@@ -969,7 +969,7 @@ A는 사용자가 입력창에 직접 넣은 지시라 직접 prompt injection�
 
 **D** (Security)
 
-tool 출력 정리는 server가 해야 하는 일입니다(MUST). server의 MUST 목록은 입력 검증, 접근 제어, 호출 횟수 제한, 출력 정리입니다. client에 권하는 목록(SHOULD)은 민감한 작업의 사용자 확인, 호출 전 입력 표시, 결과 검증, 타임아웃, 감사용 사용 기록입니다.
+tool 출력 정리는 server가 해야 하는 일입니다(MUST). server의 MUST 목록은 입력 검증, 접근 제어, 호출 횟수 제한, 출력 정리입니다. client에 권하는 목록(SHOULD)은 민감한 작업의 사용자 확인, 호출 전 입력 표시, 결과 검증, 스키마 검증 때 `$ref` 해석 규칙 준수, 타임아웃 그리고 감사용 사용 기록입니다.
 
 A와 D는 비슷해 보이지만 담당이 다릅니다. server는 자기가 만든 출력을 내보내기 전에 정리합니다. client는 받은 결과를 모델에 넘기기 전에 다시 검증합니다. 양쪽에서 한 번씩 확인하는 구조입니다. B와 C도 client 목록에 있습니다.
 
@@ -1375,7 +1375,7 @@ A는 틀렸습니다. client는 tool 호출에 타임아웃을 두는 것이 권
 
 - A. Add a bulk tool that takes a filter, and confirm once with the user before it runs
 - B. Let the model call `close_ticket` 3,000 times, skipping confirmation to save time
-- C. Subscribe to every ticket's resource so the server closes each one on update
+- C. Ask the user to close the tickets in the ticketing web UI, because MCP cannot change many records
 - D. Attach all 3,000 tickets as resources so the model closes them in one reply
 
 **한국어**
@@ -1384,7 +1384,7 @@ A는 틀렸습니다. client는 tool 호출에 타임아웃을 두는 것이 권
 
 - A. 필터를 인자로 받는 일괄 처리 tool을 추가하고 실행 전에 사용자 확인을 한 번 받는다
 - B. 시간을 아끼기 위해 모델이 확인 없이 `close_ticket`을 3,000번 호출하게 한다
-- C. 모든 티켓 resource를 구독해서 업데이트가 올 때마다 server가 하나씩 닫게 한다
+- C. MCP로는 많은 레코드를 바꿀 수 없으므로 사용자가 티켓 시스템 웹 화면에서 직접 닫게 한다
 - D. 3,000건을 모두 resource로 붙여 모델이 응답 한 번으로 닫게 한다
 
 <details><summary>정답과 설명</summary>
@@ -1393,7 +1393,7 @@ A는 틀렸습니다. client는 tool 호출에 타임아웃을 두는 것이 권
 
 대량 작업은 server 쪽 일괄 처리 tool로 처리하는 것이 맞습니다. 예를 들어 `close_stale_tickets`가 `inputSchema`로 마지막 활동 기준일 같은 필터를 받습니다. server는 입력을 검증하고 호출자에게 권한이 있는지 확인한 뒤 일괄로 처리합니다. host는 대상 건수와 조건을 보여 주고 사용자 확인을 한 번 받습니다. 모델 호출 수와 context window 사용량이 모두 작아집니다.
 
-B는 호출 수가 너무 많고 사용자 확인 없이 대량 변경을 실행합니다. 사람이 tool 호출을 거부할 수 있어야 한다는 권고(SHOULD)와도 맞지 않습니다. C의 구독은 변경 알림을 받는 방법이고 작업을 실행하지 않습니다. D의 resource는 읽기용 맥락이므로 3,000건을 넣으면 context window만 차지합니다. 모델의 응답만으로 티켓이 닫히지도 않습니다.
+B는 호출 수가 너무 많고 사용자 확인 없이 대량 변경을 실행합니다. 사람이 tool 호출을 거부할 수 있어야 한다는 권고(SHOULD)와도 맞지 않습니다. C는 틀렸습니다. MCP에는 한 번에 바꿀 수 있는 레코드 수 제한이 없으므로 일괄 처리 tool을 만들면 됩니다. D의 resource는 읽기용 맥락이므로 3,000건을 넣으면 context window만 차지합니다. 모델의 응답만으로 티켓이 닫히지도 않습니다.
 
 </details>
 
@@ -1453,7 +1453,7 @@ B는 같은 host라는 이유로 입력을 믿는 오답입니다. C처럼 권�
 
 - A. Ask for 1,000 items per page and stop when a page returns fewer than 1,000
 - B. Decode the cursor, add one to the page number inside it, and send it back
-- C. Call `resources/list` once and subscribe to list changes for the remaining pages
+- C. Call `resources/list` again without a cursor until no new items appear
 - D. Send back each `nextCursor` unchanged and stop when a response has no `nextCursor`
 
 **한국어**
@@ -1462,7 +1462,7 @@ B는 같은 host라는 이유로 입력을 믿는 오답입니다. C처럼 권�
 
 - A. 한 페이지에 1,000개를 요청하고 1,000개보다 적게 오면 멈춘다
 - B. cursor를 디코딩해 안에 있는 페이지 번호를 1 올린 뒤 다시 보낸다
-- C. `resources/list`를 한 번 호출하고 나머지는 목록 변경 구독으로 받는다
+- C. cursor 없이 `resources/list`를 반복 호출하고 새 항목이 더 나오지 않으면 멈춘다
 - D. 받은 `nextCursor`를 그대로 다시 보내고 응답에 `nextCursor`가 없으면 멈춘다
 
 <details><summary>정답과 설명</summary>
@@ -1471,7 +1471,7 @@ B는 같은 host라는 이유로 입력을 믿는 오답입니다. C처럼 권�
 
 MCP의 페이지 나누기는 불투명한 cursor 방식입니다. server는 다음 결과가 있으면 응답에 `nextCursor`를 넣습니다. client는 그 값을 수정하지 않고 다음 요청의 `cursor`로 보냅니다. `nextCursor`가 없으면 결과의 끝으로 처리합니다. 2026-07-28 개정은 빈 문자열도 올바른 cursor이므로 끝으로 처리하면 안 된다고 덧붙입니다.
 
-A는 틀렸습니다. 페이지 크기는 server가 정하고 client는 고정된 크기를 가정하면 안 됩니다(MUST NOT). B도 틀렸습니다. client는 cursor를 불투명한 값으로 다뤄야 하고 해석하거나 수정하면 안 됩니다(MUST). C의 구독은 변경 알림을 받는 방법이고 남은 결과를 보내 주지 않습니다.
+A는 틀렸습니다. 페이지 크기는 server가 정하고 client는 고정된 크기를 가정하면 안 됩니다(MUST NOT). B도 틀렸습니다. client는 cursor를 불투명한 값으로 다뤄야 하고 해석하거나 수정하면 안 됩니다(MUST). C처럼 cursor 없이 요청하면 매번 첫 페이지를 다시 받으므로 다음 페이지로 넘어가지 않습니다.
 
 </details>
 
@@ -1609,9 +1609,9 @@ A는 틀렸습니다. server들이 공유하는 세션은 없습니다. C처럼 
 
 ### 검증
 
-- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다.
-- 해설: 공식 문서와 대조하는 별도 사실 검증은 하지 않았다.
-- 그래서 틀린 곳이 있을 수 있다. 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
+- 해설: 작성에 참여하지 않은 별도 AI 에이전트가 해설의 사실 문장과 번역을 공식 2026-07-28 문서와 대조했다(2026-10-26). 이 검증에서 나온 지적으로 해설 3곳을 수정했다.
+- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다. 2026-10-26에 문항이나 보기를 바꾼 22, 25, 52, 55번은 Claude Fable 5.1과 Claude Sonnet 5.5가 같은 방식으로 따로 풀었고 2개 모델의 답이 정답표와 같았다.
+- 확인한 범위는 위 2가지다. 그래도 틀린 곳이 있을 수 있으니 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
 
 ### 참고 자료
 

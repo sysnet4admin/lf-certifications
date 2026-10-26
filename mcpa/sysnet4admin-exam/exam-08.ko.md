@@ -1,7 +1,7 @@
 # MCPA 예제 시험 08
 
 > 실제 시험 문항이 아니며 출제 내용을 보장하지 않는다. 리눅스 재단(Linux Foundation)과 AAIF의 공식 자료가 아니다.
-> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 Claude Opus 5.5가 2번 따로 풀어 확인했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
+> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 여러 AI 모델이 따로 풀어 교차 확인했고 해설은 공식 문서와 대조했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
 
 MCPA 공식 범위와 관련 문서를 참고해 재조합해서 만든 60문항이다.
 
@@ -91,29 +91,29 @@ A는 틀립니다. server는 요청을 받아 처리하는 쪽이고 host의 age
 
 </details>
 
-### 4. A server answers a request with `{"jsonrpc":"2.0","id":9,"error":"order not found"}`. The client library rejects this message. Why?
+### 4. A host shows a menu of slash commands, and each command comes from an MCP server. The user picks one, such as `/summarize-pr`, to start a workflow. Which server feature is designed for this kind of explicit choice by the user?
 
-- A. An error response must not carry an `id`, so the `id` field makes it invalid
-- B. An error response must also contain a `result` field that is set to `null`
-- C. The `jsonrpc` field is allowed only in requests and never in responses
-- D. The `error` member must be an object with an integer `code` and a `message`
+- A. Tools, because the model calls them when it decides they are needed
+- B. Resources, because the host decides which context to attach
+- C. Sampling, because the server asks the client's model to write the command
+- D. Prompts, because they are meant to be selected explicitly by the user
 
 **한국어**
 
-server가 요청에 `{"jsonrpc":"2.0","id":9,"error":"order not found"}`로 응답합니다. client 라이브러리는 이 메시지를 거부합니다. 이유는 무엇입니까?
+host가 슬래시 명령 메뉴를 보여 주고 각 명령은 MCP server에서 옵니다. 사용자는 `/summarize-pr` 같은 명령을 선택해 작업을 시작합니다. 이렇게 사용자가 직접 선택하는 용도로 설계된 server 기능은 무엇입니까?
 
-- A. error 응답에는 `id`가 있으면 안 된다. `id` 필드 때문에 잘못된 메시지가 된다
-- B. error 응답에는 값이 `null`인 `result` 필드도 있어야 한다
-- C. `jsonrpc` 필드는 요청에만 넣을 수 있고 응답에는 넣을 수 없다
-- D. `error`는 정수 `code`와 `message`를 가진 객체여야 한다
+- A. tool. 모델이 필요하다고 판단할 때 호출하기 때문이다
+- B. resource. host가 어떤 맥락을 붙일지 정하기 때문이다
+- C. sampling. server가 client의 모델에게 명령을 작성하게 하기 때문이다
+- D. prompt. 사용자가 직접 선택해서 사용하도록 만든 기능이기 때문이다
 
 <details><summary>정답과 설명</summary>
 
 **D** (Fundamentals)
 
-MCP의 error 응답에서 `error`는 객체입니다. 스펙은 이 객체에 `code`와 `message`가 있어야 하고(MUST) `code`는 정수여야 한다고(MUST) 정합니다. 추가 정보는 선택 항목인 `data`에 넣을 수 있습니다. 문자열만 넣으면 client는 오류 종류를 코드로 처리할 수 없습니다. `{"code": <정수>, "message": "order not found"}` 같은 형태로 보내야 합니다.
+server가 제공하는 기능인 tool, resource, prompt는 누가 사용 시점을 정하는지가 서로 다릅니다. 스펙은 prompt를 user-controlled로 설명합니다. server가 prompt를 공개하면 사용자가 그중 원하는 prompt를 직접 선택해 사용합니다. host는 이를 슬래시 명령 같은 사용자 인터페이스로 보여 주는 경우가 많습니다. prompt의 내용은 server가 정하지만 언제 사용할지는 사용자가 정합니다.
 
-A는 반대입니다. error 응답에도 요청과 같은 `id`를 넣어야 합니다. 생략할 수 있는 것은 요청을 읽지 못해 `id`를 알 수 없을 때뿐입니다. B도 틀립니다. 응답에는 `result`와 `error` 중 한쪽만 들어갑니다. C도 틀립니다. 모든 JSON-RPC 메시지에 `"jsonrpc": "2.0"`이 들어갑니다.
+A: tool은 model-controlled입니다. 모델이 맥락을 보고 호출 여부를 정합니다. B: resource는 application-driven입니다. 어떤 resource를 맥락에 넣을지는 host가 정합니다. C: sampling은 server 기능이 아니라 client 기능입니다. server가 client 쪽 모델의 응답을 받아야 할 때 요청하는 기능이고 사용자가 메뉴에서 선택하는 기능이 아닙니다.
 
 </details>
 
@@ -401,7 +401,7 @@ B: HTML을 알림으로 보내는 메커니즘은 없습니다. C: `ui://`는 �
 
 tool의 `inputSchema`와 `outputSchema`는 JSON Schema입니다. form 모드 elicitation의 `requestedSchema`도 JSON Schema입니다. 다만 중첩 없이 최상위의 기본 타입 속성만 허용하는 제한된 부분 집합입니다. 그래서 C의 항목 2개는 모두 JSON Schema를 사용합니다.
 
-prompt의 인자 목록은 JSON Schema가 아닙니다. 인자마다 이름, 설명, 필수 여부(`required`)만 적는 단순한 목록이고 `prompts/get`에서 인자 값은 문자열로 전달됩니다. resource template은 `file:///{path}` 같은 URI template로 매개변수를 표현합니다. 그래서 A는 항목 2개 모두 JSON Schema가 아니고 B와 D는 한 항목만 JSON Schema입니다.
+prompt의 인자 목록은 JSON Schema가 아닙니다. 인자마다 이름, 표시용 제목(`title`), 설명 그리고 필수 여부(`required`)를 적는 단순한 목록이고 `prompts/get`에서 인자 값은 문자열로 전달됩니다. resource template은 `file:///{path}` 같은 URI template로 매개변수를 표현합니다. 그래서 A는 항목 2개 모두 JSON Schema가 아니고 B와 D는 한 항목만 JSON Schema입니다.
 
 </details>
 
@@ -589,29 +589,29 @@ C가 함정입니다. Language Server Protocol 같은 다른 프로토콜은 `Co
 
 </details>
 
-### 23. A customer writes: "I was charged twice for order 5521. Please refund the extra charge." The agent has `find_customer` (looks up a customer by email), `get_order` (returns an order's details and its payments), and `refund_payment` (refunds one payment ID). The host asks the user before any refund. Which sequence fits?
+### 23. A tool's `inputSchema` marks its `region` parameter with `"x-mcp-header": "Region"`. A client calls this tool over Streamable HTTP with `region` set to `us-west1`. What does the client add to the HTTP request?
 
-- A. `refund_payment` for both payments on the order, then `get_order` to check the totals
-- B. `find_customer`, then `refund_payment` for the customer's most recent payment
-- C. `get_order` for 5521 to find the duplicate payment, user approval, then `refund_payment`
-- D. `refund_payment` with 5521 as the payment ID, then `get_order` to confirm the refund
+- A. Nothing, because `x-mcp-header` only changes how the model sees the parameter
+- B. A query string, `?region=us-west1`, at the end of the MCP endpoint URL
+- C. The header `Mcp-Param-Region: us-west1`, while the argument stays in the request body
+- D. A separate `notifications/headers` message that it sends before the `tools/call`
 
 **한국어**
 
-고객이 "주문 5521이 2번 결제됐어요. 중복 결제를 환불해 주세요"라고 적었습니다. agent에는 tool이 3개 있습니다. `find_customer`는 이메일로 고객을 찾습니다. `get_order`는 주문 상세와 결제 내역을 돌려줍니다. `refund_payment`는 결제 ID 1개를 환불합니다. host는 환불 전에 항상 사용자에게 묻습니다. 어떤 순서가 맞습니까?
+tool의 `inputSchema`에서 `region` 인자에 `"x-mcp-header": "Region"`이 지정되어 있습니다. client가 Streamable HTTP로 `region`을 `us-west1`로 지정해 이 tool을 호출합니다. client는 HTTP 요청에 무엇을 추가합니까?
 
-- A. 주문의 결제 2건을 모두 `refund_payment`로 환불하고 `get_order`로 금액을 확인한다
-- B. `find_customer`를 호출한 뒤 고객의 가장 최근 결제를 `refund_payment`로 환불한다
-- C. `get_order`로 5521의 중복 결제를 찾고 사용자 승인을 받은 뒤 `refund_payment`를 호출한다
-- D. 5521을 결제 ID로 넣어 `refund_payment`를 호출하고 `get_order`로 환불을 확인한다
+- A. 아무것도 추가하지 않는다. `x-mcp-header`는 모델이 인자를 보는 방식만 바꾼다
+- B. MCP 엔드포인트 URL 끝에 `?region=us-west1` 쿼리 문자열을 붙인다
+- C. 인자는 요청 본문에 그대로 두고 `Mcp-Param-Region: us-west1` 헤더를 추가한다
+- D. `tools/call`을 보내기 전에 별도의 `notifications/headers` 메시지를 보낸다
 
 <details><summary>정답과 설명</summary>
 
 **C** (Interactions)
 
-주문 번호를 이미 알고 있으므로 고객을 찾는 단계는 필요 없습니다. `get_order`로 결제 내역을 읽어 중복된 결제 ID를 확인합니다. 환불은 돈이 나가는 작업입니다. 그래서 host가 호출 내용을 보여 주고 사용자 승인을 받은 뒤 `refund_payment`를 호출합니다. 읽기를 먼저 하고 실행을 마지막에 두는 순서입니다.
+`x-mcp-header`는 tool 인자 값을 HTTP 헤더로도 보내도록 지정하는 속성입니다. 값이 `Region`이면 client는 `Mcp-Param-Region` 헤더에 인자 값을 넣고 인자는 요청 본문의 `arguments`에도 그대로 둡니다. 이렇게 하면 로드밸런서, 프록시, WAF 같은 중간 장비가 본문을 해석하지 않고 헤더만 보고 요청을 처리할 수 있습니다. 본문을 처리하는 server는 헤더 값과 본문 값이 같은지 확인하고 다르면 `400 Bad Request`와 `HeaderMismatch`(-32020) 오류로 거부합니다.
 
-A는 정상 결제까지 환불합니다. B는 주문을 확인하지 않고 최근 결제를 추측합니다. 최근 결제는 다른 주문의 것일 수 있습니다. D는 주문 번호와 결제 ID를 섞었습니다. tool 인자는 `inputSchema`가 정한 의미대로 넣어야 합니다.
+A: Streamable HTTP를 사용하는 client는 이 헤더를 반드시 추가해야 합니다(MUST). stdio처럼 HTTP를 사용하지 않는 transport에서는 무시해도 됩니다(MAY). B: URL 쿼리 문자열이 아니라 `Mcp-Param-` 접두사가 붙은 헤더로 보냅니다. D: MCP에는 `notifications/headers` 같은 메시지가 없습니다. 헤더 값은 중간 장비에 보이므로 비밀번호나 토큰 같은 민감한 인자에는 이 속성을 지정하지 않도록 권고합니다(SHOULD NOT).
 
 </details>
 
@@ -873,7 +873,7 @@ server는 `file:///project/docs/`를 디렉터리 resource로 공개합니다. c
 
 **B** (Interactions)
 
-`resources/read` 결과의 `contents`는 배열입니다. server는 요청 하나에 여러 resource 내용을 돌려줄 수 있습니다(MAY). 스펙은 디렉터리 resource를 읽을 때 여러 파일의 내용을 돌려주는 예를 듭니다. 각 항목에는 자기 `uri`와 `mimeType`이 있고 `text`나 `blob` 중 하나가 있습니다. 이 예는 2026-07-28 문서에 명시되어 있고 이전 개정도 `contents`를 배열로 정의합니다.
+`resources/read` 결과의 `contents`는 배열입니다. server는 요청 하나에 여러 resource 내용을 돌려줄 수 있습니다(MAY). 스펙은 디렉터리 resource를 읽을 때 여러 파일의 내용을 돌려주는 예를 듭니다. 각 항목에는 자기 `uri`가 있고 `text`나 `blob` 중 하나가 있습니다. `mimeType`은 선택 필드입니다. 이 예는 2026-07-28 문서에 명시되어 있고 이전 개정도 `contents`를 배열로 정의합니다.
 
 D는 틀립니다. `file://` resource는 실제 파일 시스템과 일치하지 않아도 됩니다. 디렉터리처럼 일반 파일이 아닌 항목은 `inode/directory` 같은 MIME 타입으로 나타낼 수 있습니다. A는 스펙에 없는 제한입니다. C는 `resources/read`의 결과가 아닙니다.
 
@@ -1293,7 +1293,7 @@ CI 작업이 컨테이너 안에서 agent를 실행합니다. agent에는 같은
 
 **B** (Use Cases)
 
-stdio에서는 client가 server를 하위 프로세스로 실행하고 표준 입출력으로 메시지를 주고받습니다. 같은 환경에서 한 client만 사용하는 server에 가장 단순한 방식입니다. 네트워크 포트를 열지 않으므로 다른 프로세스가 접근하기도 어렵습니다. 보안 모범 사례도 로컬에서 실행할 server는 stdio를 사용해 접근을 그 client로 제한하라고 권고합니다(SHOULD). 필요한 credential은 환경 변수로 넘깁니다.
+stdio에서는 client가 server를 하위 프로세스로 실행하고 표준 입출력으로 메시지를 주고받습니다. 같은 환경에서 한 client만 사용하는 server에 가장 단순한 방식입니다. 네트워크 포트를 열지 않으므로 다른 프로세스가 접근하기도 어렵습니다. 보안 모범 사례도 로컬에서 실행할 server가 악성 프로세스의 무단 사용을 막는 조치를 하라고 권고하고(SHOULD) 그 방법의 하나로 stdio를 사용해 접근을 그 client로 제한하는 것을 듭니다. 필요한 credential은 환경 변수로 넘깁니다.
 
 A는 이 작업만 사용하는 server를 불필요하게 외부에 노출합니다. C의 HTTP+SSE는 이전 transport이고 CI라는 이유로 사용할 이유가 없습니다. D의 A2A는 agent 사이의 통신을 위한 프로토콜이고 lint server는 agent가 아니라 tool을 제공하는 server입니다.
 
@@ -1442,7 +1442,7 @@ A는 위 규칙과 반대입니다. B도 틀렸습니다. `wiki://`는 server가
 
 위키 server는 tool, resource, prompt를 모두 제공합니다. Host A에서는 셋이 모두 보입니다. host 2개가 같은 server에 연결하는데도 Host B에서는 tool만 보입니다. 가능성이 가장 큰 이유는 무엇입니까?
 
-- A. Host B는 MCP 기능의 일부만 지원하며 MCP는 이를 허용한다
+- A. Host B는 MCP 기능의 일부만 지원한다. MCP는 host가 기능을 점차 추가할 수 있게 한다
 - B. host 앱마다 목록이 달라야 하므로 server가 Host B에 더 짧은 목록을 보내야 한다
 - C. Host B의 모델이 prompt와 resource의 내용을 읽고 거부했다
 - D. MCP는 server가 인증받기 전까지 host가 resource와 prompt를 숨기도록 요구한다
@@ -1487,7 +1487,7 @@ A는 틀렸습니다. annotation은 tool의 동작을 설명하는 힌트이고 
 
 - A. Page through every deal with a list tool, and let the model count them in its context
 - B. Offer a tool such as `count_deals` that filters and counts on the server side
-- C. Subscribe to every deal's resource, so that the count stays current in the context
+- C. Have the model read a small sample of deals and estimate the total from it
 - D. Attach all 200,000 deals to the conversation as resources so the model can count
 
 **한국어**
@@ -1496,7 +1496,7 @@ A는 틀렸습니다. annotation은 tool의 동작을 설명하는 힌트이고 
 
 - A. 목록 tool로 모든 거래를 페이지별로 가져와 모델이 맥락 안에서 센다
 - B. server 쪽에서 걸러서 세는 `count_deals` 같은 tool을 제공한다
-- C. 모든 거래 resource를 구독해서 맥락 안의 건수를 최신으로 유지한다
+- C. 모델이 거래 일부를 표본으로 읽고 전체 건수를 추정하게 한다
 - D. 모델이 셀 수 있도록 거래 200,000건을 모두 resource로 대화에 붙인다
 
 <details><summary>정답과 설명</summary>
@@ -1505,7 +1505,7 @@ A는 틀렸습니다. annotation은 tool의 동작을 설명하는 힌트이고 
 
 집계는 데이터가 있는 server 쪽에서 하는 것이 맞습니다. `count_deals`의 `inputSchema`에 기간과 상태 같은 필터를 두면 모델은 "지난 분기, 성사됨"을 인자로 넘깁니다. server는 데이터베이스에서 건수를 계산하고 숫자만 돌려줍니다. 모델이 받는 결과가 작으므로 context window를 거의 사용하지 않습니다. 계산도 정확합니다.
 
-A와 D는 200,000건을 맥락으로 옮기므로 context window를 넘기기 쉽습니다. 모델이 직접 세면 틀릴 가능성도 큽니다. C의 구독은 변경 알림을 받는 방법이고 건수를 계산하지 않습니다. 구독은 데이터 양을 해결하는 방법이 아닙니다.
+A와 D는 200,000건을 맥락으로 옮기므로 context window를 넘기기 쉽습니다. 모델이 직접 세면 틀릴 가능성도 큽니다. C는 추정값이라 정확한 건수가 아닙니다. server에서 정확히 셀 수 있으므로 모델이 추정하게 할 이유가 없습니다.
 
 </details>
 
@@ -1591,9 +1591,9 @@ B와 D는 내부망이나 한 번의 확인을 믿는 오답입니다. C도 틀�
 
 ### 검증
 
-- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다.
-- 해설: 공식 문서와 대조하는 별도 사실 검증은 하지 않았다.
-- 그래서 틀린 곳이 있을 수 있다. 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
+- 해설: 작성에 참여하지 않은 별도 AI 에이전트가 해설의 사실 문장과 번역을 공식 2026-07-28 문서와 대조했다(2026-10-26). 이 검증에서 나온 지적으로 해설 3곳과 번역 1곳을 수정했다.
+- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다. 2026-10-26에 문항이나 보기를 바꾼 4, 23, 57번은 Claude Fable 5.1과 Claude Sonnet 5.5가 같은 방식으로 따로 풀었고 2개 모델의 답이 정답표와 같았다.
+- 확인한 범위는 위 2가지다. 그래도 틀린 곳이 있을 수 있으니 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
 
 ### 참고 자료
 

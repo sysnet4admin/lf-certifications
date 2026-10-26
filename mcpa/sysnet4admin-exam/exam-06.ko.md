@@ -1,7 +1,7 @@
 # MCPA 예제 시험 06
 
 > 실제 시험 문항이 아니며 출제 내용을 보장하지 않는다. 리눅스 재단(Linux Foundation)과 AAIF의 공식 자료가 아니다.
-> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 Claude Opus 5.5가 2번 따로 풀어 확인했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
+> AI로 작성했으므로 틀린 곳이 있을 수 있다. 정답은 여러 AI 모델이 따로 풀어 교차 확인했고 해설은 공식 문서와 대조했다. 검증 방법과 참고 자료는 맨 아래 정답표 바로 앞에 있다. 공식 스펙과 다르면 공식 스펙이 우선이다.
 
 MCPA 공식 범위와 관련 문서를 참고해 재조합해서 만든 60문항이다.
 
@@ -441,29 +441,29 @@ B: 스펙은 `file://`를 로컬 디스크로 제한하지 않습니다. C: `htt
 
 </details>
 
-### 17. A host connects to 40 servers. Their tool definitions alone fill most of the model's context window before the model even reads the user's message. Which approach does MCP's client guidance describe?
+### 17. A desktop host connects to three MCP servers: a file server, a database server, and a ticket server. How are MCP clients arranged inside the host?
 
-- A. Ask each server for shorter definitions through a `tools/compact` method
-- B. Fetch them with `tools/list` as usual, but load into context only what the task needs
-- C. Subscribe to tool list changes so that definitions arrive as notifications
-- D. Strip `inputSchema` from every definition before passing it to the model
+- A. One client that all three servers share, so the host keeps a single connection
+- B. Three clients, each created by the host and connected to exactly one server
+- C. One client per tool, so that each tool call goes through its own connection
+- D. No client at all, because the model sends requests to each server directly
 
 **한국어**
 
-host가 server 40개에 연결했습니다. 모델이 사용자 메시지를 읽기도 전에 tool 정의만으로 모델 context window의 대부분이 찹니다. MCP의 client 지침이 설명하는 방법은 무엇입니까?
+데스크톱 host가 파일 server, 데이터베이스 server, 티켓 server 3개에 연결합니다. host 안에서 MCP client는 어떻게 구성됩니까?
 
-- A. `tools/compact` 메서드로 각 server에 더 짧은 정의를 요청한다
-- B. `tools/list`로는 평소처럼 받고 작업에 필요한 정의만 context에 넣는다
-- C. tool 목록 변경을 구독해서 정의를 알림으로 받는다
-- D. 모델에 넘기기 전에 모든 정의에서 `inputSchema`를 지운다
+- A. server 3개가 함께 사용하는 client 1개를 두어 host가 연결 1개만 유지한다
+- B. host가 client 3개를 만들고 각 client는 server 1개에만 연결한다
+- C. tool마다 client를 하나씩 두어 tool 호출마다 별도 연결을 사용한다
+- D. 모델이 각 server에 직접 요청을 보내므로 client를 두지 않는다
 
 <details><summary>정답과 설명</summary>
 
 **B** (Architecture)
 
-context window는 모델이 한 번에 읽을 수 있는 입력의 크기입니다. MCP 문서의 client 모범 사례는 이 문제의 해결책으로 progressive discovery(점진적 발견)를 설명합니다. host는 `tools/list`로 정의를 평소처럼 받아 둡니다. 다만 모든 정의를 처음부터 모델 context에 넣지 않습니다. 모델에게는 `search_tools` 같은 가벼운 검색 tool을 주고 필요한 tool의 정의만 그때 context에 넣습니다.
+MCP는 host, client, server로 구성됩니다. 스펙의 Architecture 문서에는 host가 client 인스턴스를 여러 개 만들고 관리한다고 적혀 있습니다. 그리고 각 client는 정확히 server 1개와만 통신하므로 client와 server는 1:1 관계입니다. server가 3개면 client도 3개입니다. client는 server 사이의 보안 경계를 유지하고 여러 server에서 받은 맥락을 모으는 일은 host가 합니다.
 
-이 방식은 모두 host 안에서 일어나므로 server를 수정할 필요가 없습니다. A: MCP에는 `tools/compact` 메서드가 없습니다. C: 목록 변경 알림은 목록이 바뀌었다는 사실만 알립니다. context에 들어가는 정의의 양은 그대로입니다. D: `inputSchema`는 필수 필드이고 모델이 인자를 채우는 근거입니다. 지우면 모델이 인자를 제대로 채우기 어렵습니다.
+A: client 1개가 여러 server와 연결하는 구조가 아닙니다. C: client는 tool이 아니라 server 단위로 만듭니다. server 1개가 tool을 여러 개 제공해도 같은 client가 `tools/call`로 호출합니다. D: 모델은 server와 직접 통신하지 않습니다. 모델이 tool 호출을 결정하면 host가 그 server에 연결된 client를 통해 요청을 보냅니다.
 
 </details>
 
@@ -661,18 +661,18 @@ A는 2개 층을 거꾸로 보았습니다. `isError` 결과는 JSON-RPC 차원�
 
 </details>
 
-### 25. A support server has about 80,000 customer records. The model often needs to find the two or three records that match a customer's name or phone number. A teammate suggests exposing every record as a resource and subscribing to all of them so that the data is always at hand. Which design fits better?
+### 25. A support server has about 80,000 customer records. The model often needs to find the two or three records that match a customer's name or phone number. A teammate suggests a `get_all_customers` tool that returns every record in one result, so that the model can find the matches itself. Which design fits better?
 
-- A. Follow the plan and subscribe to every record, so that updates arrive as records change
+- A. Follow the plan and return all 80,000 records from `get_all_customers` in one result
 - B. List all 80,000 records in `resources/list` and let the model scan the whole list
 - C. Offer a search tool that takes a name or phone number and returns only the matches
 - D. Put every record into the server's instructions so the model sees them from the start
 
 **한국어**
 
-고객 지원 server에는 고객 레코드가 약 80,000건 있습니다. 모델은 고객 이름이나 전화번호에 맞는 레코드 두세 건을 찾아야 할 때가 많습니다. 팀원은 모든 레코드를 resource로 공개하고 전부 구독해서 데이터를 항상 받아 두자고 제안합니다. 어느 설계가 더 맞습니까?
+고객 지원 server에는 고객 레코드가 약 80,000건 있습니다. 모델은 고객 이름이나 전화번호에 맞는 레코드 두세 건을 찾아야 할 때가 많습니다. 팀원은 모든 레코드를 결과 하나로 돌려주는 `get_all_customers` tool을 만들어 모델이 맞는 레코드를 직접 찾게 하자고 제안합니다. 어느 설계가 더 맞습니까?
 
-- A. 제안대로 모든 레코드를 구독해 레코드가 바뀔 때마다 업데이트를 받는다
+- A. 제안대로 `get_all_customers`가 80,000건을 결과 하나로 모두 돌려주게 한다
 - B. 80,000건을 모두 `resources/list`에 나열하고 모델이 전체 목록을 훑게 한다
 - C. 이름이나 전화번호를 인자로 받아 일치하는 레코드만 돌려주는 검색 tool을 제공한다
 - D. 모든 레코드를 server instructions에 넣어 모델이 처음부터 보게 한다
@@ -683,7 +683,7 @@ A는 2개 층을 거꾸로 보았습니다. `isError` 결과는 JSON-RPC 차원�
 
 필요한 일은 많은 레코드 가운데 조건에 맞는 몇 건을 찾는 것입니다. 모델이 필요할 때 조건을 넣어 호출하는 검색 tool이 맞습니다. `inputSchema`에 이름과 전화번호 인자를 정의하고 server가 일치하는 결과만 돌려주면 context window도 적게 차지합니다. 찾은 레코드의 상세를 읽는 tool이나 resource를 따로 두어도 됩니다.
 
-A가 함정입니다. 구독은 이미 알고 있는 resource가 바뀌었을 때 알림을 받는 기능입니다. 데이터 양을 줄이거나 검색을 대신하지 않습니다. 80,000건을 구독하면 알림만 많아집니다. B는 페이지를 나누더라도 모델이 모든 항목을 봐야 하므로 비효율적입니다. D는 모든 레코드를 매번 모델 맥락에 넣는 방식이라 context window를 낭비하고 필요 없는 개인정보까지 노출합니다.
+A가 함정입니다. 결과 하나에 80,000건을 넣으면 그 결과가 모두 모델의 맥락으로 들어가므로 context window를 넘기기 쉽습니다. 모델이 그 안에서 맞는 레코드를 찾는 과정도 정확하지 않습니다. 검색은 데이터가 있는 server에서 하는 것이 맞습니다. B는 페이지를 나누더라도 모델이 모든 항목을 봐야 하므로 비효율적입니다. D는 모든 레코드를 매번 모델 맥락에 넣는 방식이라 context window를 낭비하고 필요 없는 개인정보까지 노출합니다.
 
 </details>
 
@@ -711,7 +711,7 @@ client 라이브러리의 오타 때문에 client가 `method`가 `tools/call`이
 
 없는 tool 이름과 구분해야 합니다. 메서드는 `tools/call`로 맞게 보냈는데 `params.name`의 tool이 없으면 Invalid params 오류가 됩니다. 2가지 경우 모두 tool 실행 오류가 아니라 프로토콜 오류입니다.
 
-A는 tool이 실행된 뒤의 실패에 사용하는 형식이라 맞지 않습니다. 메서드 이름은 모델이 아니라 client 코드가 정하므로 모델이 수정할 수도 없습니다. C처럼 비슷한 이름을 추측해 실행하는 규칙은 없습니다. D는 client를 제한 시간까지 기다리게 만듭니다.
+A의 `isError: true`는 server가 tool을 찾아 호출을 처리하다가 생긴 실패를 알리는 형식이고 입력 검증 실패도 여기에 들어갑니다. 이 경우는 메서드를 찾지 못해 tool까지 가지 못했으므로 맞지 않습니다. 메서드 이름은 모델이 아니라 client 코드가 정하므로 모델이 수정할 수도 없습니다. C처럼 비슷한 이름을 추측해 실행하는 규칙은 없습니다. D는 client를 제한 시간까지 기다리게 만듭니다.
 
 </details>
 
@@ -789,7 +789,7 @@ server가 받은 메시지의 본문이 올바른 JSON이 아니어서 요청의
 
 **D** (Interactions)
 
-오류 응답에는 원래 요청과 같은 `id`가 있어야 합니다(MUST). 예외는 요청이 잘못되어 `id`를 읽을 수 없는 경우입니다. 이때 오류 응답은 `id` 없이 `error` 객체만 갖습니다. `error`에는 정수 `code`와 `message`가 있어야 합니다(MUST). JSON 파싱 실패에는 JSON-RPC 표준의 Parse error 코드를 사용합니다. 기본 JSON-RPC 2.0은 이 경우 `id`를 `null`로 두지만 MCP 스키마는 `id`를 생략하는 형태로 정의합니다.
+오류 응답에는 원래 요청과 같은 `id`가 있어야 합니다(MUST). 예외는 요청이 잘못되어 `id`를 읽을 수 없는 경우입니다. 이때 오류 응답에는 `id`를 넣지 않고 `jsonrpc`와 `error`만 넣습니다. `error`에는 정수 `code`와 `message`가 있어야 합니다(MUST). JSON 파싱 실패에는 JSON-RPC 표준의 Parse error 코드를 사용합니다. 기본 JSON-RPC 2.0은 이 경우 `id`를 `null`로 두지만 MCP 스키마는 `id`를 생략하는 형태로 정의합니다.
 
 A는 틀립니다. 알림인지 요청인지는 메시지를 읽어야 판단할 수 있습니다. 읽지 못한 메시지를 알림으로 볼 근거는 없습니다. B는 tool 실행 결과 형식을 엉뚱한 곳에 사용했고 임의의 id를 붙였습니다. C는 다른 요청의 id를 붙이므로 client는 엉뚱한 요청이 실패했다고 판단합니다.
 
@@ -871,7 +871,7 @@ A는 "적어도 하나" 규칙을 잘못 읽었습니다. B는 server만 해석�
 
 **B** (Interactions)
 
-매개변수가 있는 URI 패턴을 resource template이라고 합니다. client는 `resources/templates/list`로 template 목록을 받습니다. 각 template에는 URI template 표준 형식의 `uriTemplate`과 이름, 설명이 있습니다. client는 `{project}`와 `{number}`에 값을 채워 실제 URI를 만들고 `resources/read`로 읽습니다.
+매개변수가 있는 URI 패턴을 resource template이라고 합니다. client는 `resources/templates/list`로 template 목록을 받습니다. 각 template에는 URI template 표준 형식의 `uriTemplate`과 이름(`name`)이 반드시 있고 설명(`description`)은 선택입니다. client는 `{project}`와 `{number}`에 값을 채워 실제 URI를 만들고 `resources/read`로 읽습니다.
 
 이 방식은 개수가 아주 많은 resource에 맞습니다. 티켓이 수십만 건이어도 server는 template 1개만 알리면 됩니다. `resources/templates/list`도 페이지 나누기를 지원합니다.
 
@@ -1117,7 +1117,7 @@ A와 B는 연결 경로를 신뢰의 근거로 삼습니다. 로그는 사후 �
 
 **B** (Security)
 
-tools 문서의 보안 고려 사항은 책임을 둘로 나눕니다. server가 해야 하는 것(MUST)은 입력 검증, 접근 제어, 호출 횟수 제한(rate limit), 출력 정리(sanitize)입니다. client에 권하는 것(SHOULD)은 민감한 작업의 사용자 확인, 호출 전 입력 표시, 결과 검증, 타임아웃, 감사용 사용 기록입니다.
+tools 문서의 보안 고려 사항은 책임을 둘로 나눕니다. server가 해야 하는 것(MUST)은 입력 검증, 접근 제어, 호출 횟수 제한(rate limit), 출력 정리(sanitize)입니다. client에 권하는 것(SHOULD)은 민감한 작업의 사용자 확인, 호출 전 입력 표시, 결과 검증, 스키마 검증 때 `$ref` 해석 규칙 준수, 타임아웃 그리고 감사용 사용 기록입니다.
 
 A와 D는 client의 SHOULD 목록에 있습니다. C도 host 화면에 관한 권고입니다. tools 문서는 tool이 호출될 때 눈에 띄는 표시를 넣으라고 application에 권합니다(SHOULD). 담당을 이렇게 나누어도 한쪽이 다른 쪽을 대신하지는 않습니다. host가 사용자 확인을 받아도 server는 입력 검증과 접근 제어를 해야 합니다.
 
@@ -1396,7 +1396,7 @@ A는 틀렸습니다. 원격 server는 여러 조직의 사용자를 받을 수 
 - A. Have the model read the whole file into its context and call `create_lead` 50,000 times
 - B. Have the model paste every row of the file into one long string argument of `create_lead`
 - C. Add an `import_leads` tool that takes the file's ID, so the server reads and imports it
-- D. Subscribe to the file's resource so that each new row becomes a lead automatically
+- D. Ask the user to split the file into 50 smaller files and repeat the request for each one
 
 **한국어**
 
@@ -1405,7 +1405,7 @@ A는 틀렸습니다. 원격 server는 여러 조직의 사용자를 받을 수 
 - A. 모델이 파일 전체를 맥락으로 읽고 `create_lead`를 50,000번 호출하게 한다
 - B. 모델이 파일의 모든 행을 `create_lead`의 긴 문자열 인자 1개에 모두 넣게 한다
 - C. 파일 ID를 받는 `import_leads` tool을 추가해 server가 파일을 직접 읽어 가져오게 한다
-- D. 파일 resource를 구독해서 새 행이 생길 때마다 자동으로 잠재 고객이 되게 한다
+- D. 사용자에게 파일을 작은 파일 50개로 나눠 파일마다 같은 요청을 반복해 달라고 한다
 
 <details><summary>정답과 설명</summary>
 
@@ -1413,14 +1413,14 @@ A는 틀렸습니다. 원격 server는 여러 조직의 사용자를 받을 수 
 
 tool 인자는 모델이 만들어 보냅니다. 50,000행을 인자로 옮기려면 그 내용이 모두 context window를 지나야 합니다. 비용이 크고 행이 빠지거나 바뀔 위험도 큽니다. 그래서 대량 데이터는 참조 값으로 넘기는 것이 맞습니다. `import_leads`의 `inputSchema`에 필수 인자 `file_id`를 두면 server가 문서 시스템에서 파일을 직접 읽습니다. server는 행마다 값을 검증하고 호출자 권한을 확인한 뒤 일괄로 저장합니다. 결과로는 성공 건수와 실패한 행만 돌려줍니다.
 
-A는 호출 수와 맥락 사용량이 지나치게 큽니다. B는 데이터가 여전히 모델을 거치고 스키마로 검증하기도 어렵습니다. D의 구독은 변경 알림을 받는 방법이고 데이터를 저장하는 작업을 실행하지 않습니다.
+A는 호출 수와 맥락 사용량이 지나치게 큽니다. B는 데이터가 여전히 모델을 거치고 스키마로 검증하기도 어렵습니다. D는 사용자가 할 일만 늘어나고 각 파일의 행은 여전히 모델을 거칩니다.
 
 </details>
 
 ### 53. An order server's `search_orders` tool can match 20,000 orders. The team wants the model to receive the results one page at a time. Which design fits?
 
 - A. Return all orders in one result and rely on `nextCursor` to split `tools/call` results
-- B. Have the client subscribe to the order list so new pages are pushed as they become ready
+- B. Return the first 100 orders and add a note that the rest were left out
 - C. Raise the page size of `tools/list` so the full result fits into a single response
 - D. Add arguments such as `limit` and `page_token` to the tool and return one page each call
 
@@ -1429,7 +1429,7 @@ A는 호출 수와 맥락 사용량이 지나치게 큽니다. B는 데이터가
 주문 server의 `search_orders` tool은 주문 20,000건과 일치할 수 있습니다. 팀은 모델이 결과를 한 페이지씩 받기를 원합니다. 어떤 설계가 맞습니까?
 
 - A. 결과를 한 번에 모두 돌려주고 `nextCursor`가 `tools/call` 결과를 나눠 주기를 기대한다
-- B. client가 주문 목록을 구독하게 해서 준비된 페이지를 server가 차례로 보내게 한다
+- B. 처음 100건만 돌려주고 나머지는 생략했다는 문구를 붙인다
 - C. `tools/list`의 페이지 크기를 늘려 결과 전체가 응답 하나에 들어가게 한다
 - D. tool에 `limit`, `page_token` 같은 인자를 추가하고 호출마다 한 페이지를 돌려준다
 
@@ -1439,7 +1439,7 @@ A는 호출 수와 맥락 사용량이 지나치게 큽니다. B는 데이터가
 
 MCP의 cursor 기반 페이지 나누기는 목록 작업에 적용됩니다. 대상은 `tools/list`, `resources/list`, `resources/templates/list`, `prompts/list`입니다. `tools/call` 결과에는 프로토콜 차원의 `nextCursor`가 없습니다. 그래서 tool 결과를 나누려면 tool 자체를 그렇게 설계해야 합니다. `inputSchema`에 `limit`와 다음 페이지 표시 값 같은 인자를 두고 결과에 다음 요청에 사용할 값을 함께 돌려주면 됩니다. 모델은 필요할 때만 다음 페이지를 요청합니다.
 
-A는 틀렸습니다. `tools/call` 결과는 자동으로 나뉘지 않습니다. 20,000건을 한 번에 돌려주면 context window도 금방 찹니다. B의 구독은 변경 알림을 받는 방법이고 결과의 양을 나누는 방법이 아닙니다. C의 페이지 크기는 server가 정합니다. 그리고 `tools/list`는 tool 정의 목록이므로 검색 결과와 관계가 없습니다.
+A는 틀렸습니다. `tools/call` 결과는 자동으로 나뉘지 않습니다. 20,000건을 한 번에 돌려주면 context window도 금방 찹니다. B는 나머지 결과를 가져올 방법이 없어서 모델이 다음 페이지를 요청할 수 없습니다. C의 페이지 크기는 server가 정합니다. 그리고 `tools/list`는 tool 정의 목록이므로 검색 결과와 관계가 없습니다.
 
 </details>
 
@@ -1463,7 +1463,7 @@ A는 틀렸습니다. `tools/call` 결과는 자동으로 나뉘지 않습니다
 
 **C** (Use Cases)
 
-MCP는 host와 server 사이의 프로토콜이고 어떤 LLM을 사용할지는 정하지 않습니다. server는 `tools/list`로 tool 이름, 설명, `inputSchema`를 알리고 `tools/call`을 받아 실행합니다. 이 tool 정의를 모델의 function calling 형식으로 바꿔 전달하는 일은 host가 담당합니다. 그래서 모델을 바꾸면 host의 모델 연동 부분만 바뀝니다. server 8개는 그대로 사용할 수 있습니다.
+MCP는 client와 server 사이의 프로토콜이고 어떤 LLM을 사용할지는 정하지 않습니다. client를 만들고 LLM 연동을 조정하는 쪽은 host입니다. server는 `tools/list`로 tool 이름, 설명, `inputSchema`를 알리고 `tools/call`을 받아 실행합니다. 이 tool 정의를 모델의 function calling 형식으로 바꿔 전달하는 일은 host가 담당합니다. 그래서 모델을 바꾸면 host의 모델 연동 부분만 바뀝니다. server 8개는 그대로 사용할 수 있습니다.
 
 A의 server는 모델 vendor의 SDK를 사용할 필요가 없습니다. MCP 구현만 있으면 됩니다. B 같은 등록 절차는 MCP에 없습니다. D의 transport는 host와 server 사이의 연결 방식이고 모델 vendor와 관계가 없습니다.
 
@@ -1631,9 +1631,9 @@ B의 system prompt는 모델의 행동을 보장하지 못합니다. C의 annota
 
 ### 검증
 
-- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다.
-- 해설: 공식 문서와 대조하는 별도 사실 검증은 하지 않았다.
-- 그래서 틀린 곳이 있을 수 있다. 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
+- 해설: 작성에 참여하지 않은 별도 AI 에이전트가 해설의 사실 문장과 번역을 공식 2026-07-28 문서와 대조했다(2026-10-26). 이 검증에서 나온 지적으로 해설 5곳을 수정했다.
+- 정답: Claude Opus 5.5가 정답과 해설을 지운 영어 문제지를 2번 따로 풀었다(2026-10-19). 각 풀이는 다른 풀이의 결과를 보지 않았다. 2번 모두 60문항이 정답표와 같았다. 2026-10-26에 문항이나 보기를 바꾼 17, 25, 52, 53번은 Claude Fable 5.1과 Claude Sonnet 5.5가 같은 방식으로 따로 풀었고 2개 모델의 답이 정답표와 같았다.
+- 확인한 범위는 위 2가지다. 그래도 틀린 곳이 있을 수 있으니 이상한 부분은 공개 저장소 이슈로 알려 주면 수정한다.
 
 ### 참고 자료
 
